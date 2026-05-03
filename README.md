@@ -44,16 +44,41 @@ Then open:
 http://localhost:4173
 ```
 
-### Best hosting choice right now
+### GitHub Pages deployment flow
 
-Use **Vercel** or **Netlify** first.
+This repo is now set up for a clean split:
 
-Why:
-- easiest deployment for this exported build
-- no Expo Go required for the end user
-- less friction than a mobile-first testing loop
+- `source` = app source code
+- `main` = compiled static web build only
 
-GitHub Pages is possible, but it is a little more finicky because static web exports often need extra path/base-url care depending on the repo URL.
+On every push to `source`, GitHub Actions will:
+
+1. run `npm ci`
+2. run `npm run build:web`
+3. force-push the exported `dist/` output to `main`
+
+Workflow file:
+
+```text
+.github/workflows/deploy-pages.yml
+```
+
+### One-time GitHub Pages setting
+
+In the GitHub repo settings:
+
+- go to **Settings → Pages**
+- set **Build and deployment** to **Deploy from a branch**
+- choose branch **main** and folder **/(root)**
+
+After that, each push to `source` should update the live site automatically once the workflow finishes.
+
+### Why this setup
+
+- keeps source history clean
+- keeps the deploy branch disposable
+- avoids mixing app code with built output
+- fits GitHub Pages well for a static Expo web export
 
 ## How to run on a phone (Expo Go)
 
